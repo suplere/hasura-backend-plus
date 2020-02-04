@@ -80,7 +80,7 @@ CREATE TABLE user_roles (
 -- alter tables (constraints, FKs etc)
 ALTER TABLE ONLY apps
   ADD CONSTRAINT apps_name_key UNIQUE (name),
-	ADD CONSTRAINT apps_pkey PRIMARY KEY (id)
+	ADD CONSTRAINT apps_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY users
   ADD CONSTRAINT users_secret_token_key UNIQUE (secret_token),
@@ -118,12 +118,9 @@ ALTER TABLE ONLY user_accounts
   ADD CONSTRAINT user_accounts_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_roles
-  ADD CONSTRAINT user_roles_role_fkey FOREIGN KEY (role) REFERENCES roles(role) ON UPDATE RESTRICT ON DELETE CASCADE;
-  ADD CONSTRAINT user_roles_app_id_fkey FOREIGN KEY (app_id) REFERENCES apps(id) ON UPDATE RESTRICT ON DELETE CASCADE;
+  ADD CONSTRAINT user_roles_role_fkey FOREIGN KEY (role) REFERENCES roles(role) ON UPDATE RESTRICT ON DELETE CASCADE,
+  ADD CONSTRAINT user_roles_app_id_fkey FOREIGN KEY (app_id) REFERENCES apps(id) ON UPDATE RESTRICT ON DELETE CASCADE,
   ADD CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-ALTER TABLE ONLY users
-  ADD CONSTRAINT users_default_role_fkey FOREIGN KEY (default_role) REFERENCES roles(role) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 -- do inserts
 INSERT INTO roles (role) VALUES ('user');
