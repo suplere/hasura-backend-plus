@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const uuidv4 = require('uuid/v4');
 const jwt = require('jsonwebtoken');
 const { graphql_client } = require('../graphql-client');
+const rasha = require('rasha')
 
 const {
   USER_FIELDS,
@@ -13,6 +14,7 @@ const {
   REFRESH_TOKEN_EXPIRES,
   JWT_TOKEN_EXPIRES,
   HASURA_GRAPHQL_JWT_SECRET,
+  AUTH_PUBLIC_KEY
 } = require('../config');
 
 const auth_functions = require('./auth-functions');
@@ -20,6 +22,20 @@ const auth_functions = require('./auth-functions');
 let router = express.Router();
 
 const schema_name = USER_MANAGEMENT_DATABASE_SCHEMA_NAME === 'public' ? '' : USER_MANAGEMENT_DATABASE_SCHEMA_NAME.toString().toLowerCase() + '_';
+
+router.get('/jwks', async (req, res, next) => {
+  const jwk = {
+    ...rasha.importSync({ pem: AUTH_PUBLIC_KEY }),
+    alg: 'RS256',
+    use: 'sig',
+    kid: AUTH_PUBLIC_KEY
+  }
+  const jwks = {
+    keys: [jwk]
+  }
+  res.setHeader('Content-Type', 'application/json')
+  res.send(JSON.stringify(jwks, null, 2) + '\n')
+});
 
 router.post('/refresh-token', async (req, res, next) => {
 
