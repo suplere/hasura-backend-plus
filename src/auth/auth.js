@@ -71,8 +71,8 @@ router.post('/refresh-token', async (req, res, next) => {
       user {
         id
         active
-        default_role
         user_roles {
+          default
           role
         }
         ${USER_FIELDS.join('\n')}
@@ -378,9 +378,9 @@ router.get('/user', async (req, res, next) => {
       email
       avatar_url
       active
-      default_role
       roles: user_roles {
         role
+        default
       }
       ${USER_FIELDS.join('\n')}
     }
