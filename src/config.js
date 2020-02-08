@@ -3,7 +3,6 @@ var fnv = require('fnv-plus')
 // HASURA
 exports.HASURA_GRAPHQL_ENDPOINT = process.env.HASURA_GRAPHQL_ENDPOINT || 'http://localhost:8080/v1/graphql';
 exports.HASURA_GRAPHQL_ADMIN_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET || 'myadminsecretkey';
-exports.HASURA_GRAPHQL_JWT_SECRET = process.env.HASURA_GRAPHQL_JWT_SECRET ? JSON.parse(process.env.HASURA_GRAPHQL_JWT_SECRET) : { 'type': 'HS256', 'key': '3EK6FD+o0+c7tzBNVfjpMkNDi2yARAAKzQlk8O2IKoxQu4nF7EdAh8s3TwpHwrdWT6R' };
 exports.AUTH_PRIVATE_KEY = (process.env.AUTH_PRIVATE_KEY || fs.readFileSync('private.pem').toString()).replace(/\\n/g, '\n')
 exports.AUTH_PUBLIC_KEY = (process.env.AUTH_PUBLIC_KEY || fs.readFileSync('public.pem').toString()).replace(/\\n/g, '\n')
 exports.AUTH_KEY_ID = process.env.AUTH_KEY_ID || fnv.hash(this.AUTH_PUBLIC_KEY, 128).hex()

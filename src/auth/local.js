@@ -13,7 +13,6 @@ const {
   USER_MANAGEMENT_DATABASE_SCHEMA_NAME,
   REFRESH_TOKEN_EXPIRES,
   JWT_TOKEN_EXPIRES,
-  HASURA_GRAPHQL_JWT_SECRET,
 } = require('../config');
 
 let router = express.Router();

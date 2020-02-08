@@ -13,8 +13,8 @@ const {
   USER_MANAGEMENT_DATABASE_SCHEMA_NAME,
   REFRESH_TOKEN_EXPIRES,
   JWT_TOKEN_EXPIRES,
-  HASURA_GRAPHQL_JWT_SECRET,
-  AUTH_PUBLIC_KEY
+  AUTH_PUBLIC_KEY,
+  AUTH_PRIVATE_KEY
 } = require('../config');
 
 const auth_functions = require('./auth-functions');
@@ -354,9 +354,9 @@ router.get('/user', async (req, res, next) => {
   try {
     claims = jwt.verify(
       token,
-      HASURA_GRAPHQL_JWT_SECRET.key,
+      AUTH_PRIVATE_KEY,
       {
-        algorithms: HASURA_GRAPHQL_JWT_SECRET.type,
+        algorithms: 'RS256',
       }
     );
   } catch (e) {
