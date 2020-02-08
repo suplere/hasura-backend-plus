@@ -47,7 +47,7 @@ exports.AUTH_FACEBOOK_CALLBACK_URL = process.env.AUTH_FACEBOOK_CALLBACK_URL || '
 // STORAGE
 exports.STORAGE_ACTIVE = process.env.STORAGE_ACTIVE ? process.env.STORAGE_ACTIVE === 'true' : true;
 exports.STORAGE_JWT_SECRET = process.env.STORAGE_JWT_SECRET ? JSON.parse(process.env.STORAGE_JWT_SECRET) : { 'type': 'HS256', 'key': 'storage_secretkey' };
-exports.S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID || '31D90B970818F8CF401C';
-exports.S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY || 'eFCAHOJLNsfRfT4dfhxP6YLchTobGfpEyYaorFZB';
-exports.S3_ENDPOINT = process.env.S3_ENDPOINT || 'https://s3.filebase.com';
-exports.S3_BUCKET = process.env.S3_BUCKET || 'suplere-test-bucket';
+exports.S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID || '';
+exports.S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY || '';
+exports.S3_ENDPOINT = process.env.S3_ENDPOINT || '';
+exports.S3_BUCKET = process.env.S3_BUCKET || '';
