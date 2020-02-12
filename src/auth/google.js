@@ -52,6 +52,12 @@ passport.use(new GoogleStrategy({
         user_roles {
           role
           default
+          app_id
+          app{
+            id
+            successUrl
+            failureUrl
+          }
         }
         ${USER_FIELDS.join('\n')}
       }
@@ -89,6 +95,12 @@ passport.use(new GoogleStrategy({
           user_roles {
             role
             default
+            app_id
+            app{
+              id
+              successUrl
+              failureUrl
+            }
           }
           ${USER_FIELDS.join('\n')}
         }
@@ -142,7 +154,10 @@ passport.use(new GoogleStrategy({
     return cb(null, user);
   }));
 
-router.get('/',
+router.get('/', function (req, res, next) {
+  req.session.appId = req.query.appId
+  next()
+},
   passport.authenticate('google', {
     session: false,
   })
@@ -150,7 +165,6 @@ router.get('/',
 
 router.get('/callback',
   passport.authenticate('google', {
-    failureRedirect: PROVIDERS_FAILURE_REDIRECT,
     session: false,
   }),
   async function (req, res) {
@@ -159,8 +173,38 @@ router.get('/callback',
     // generate tokens and redirect back home
 
     const { user } = req;
+    const { appId } = req.session
 
-    const jwt_token = auth_functions.generateJwtToken(user);
+    user.user_roles = user.user_roles.filter(r => r.app_id === appId)
+
+    let app
+
+    if (user.user_roles.length == 0) {
+      //Empty APP
+      const query = `
+        query App($appId: uuid) {
+          apps(where: {id: {_eq: $appId}}) {
+            id
+            successUrl
+            failureUrl
+          }
+        }
+      `;
+      try {
+        hasura_data = await graphql_client.request(query, {
+          appId
+        });
+        app = hasura_data.apps[0]
+      } catch (e) {
+        console.error(e);
+        return cb(null, false, { message: 'error hasura data two 2' });
+      }
+
+    } else {
+      app = user.user_roles[0].app
+    }
+
+    // const jwt_token = auth_functions.generateJwtToken(user);
 
     // generate refresh token and put in database
     const query = `
@@ -191,10 +235,10 @@ router.get('/callback',
 
     // send user back
     let callback_url = '';
-    if (PROVIDERS_SUCCESS_REDIRECT.indexOf('?') > 1) {
-      callback_url = `${PROVIDERS_SUCCESS_REDIRECT}&refresh_token=${refresh_token}`;
+    if (app.successUrl.indexOf('?') > 1) {
+      callback_url = `${app.successUrl}&refresh_token=${refresh_token}`;
     } else {
-      callback_url = `${PROVIDERS_SUCCESS_REDIRECT}?refresh_token=${refresh_token}`;
+      callback_url = `${app.successUrl}?refresh_token=${refresh_token}`;
     }
 
     res.redirect(callback_url);

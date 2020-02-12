@@ -42,6 +42,7 @@ router.post('/refresh-token', async (req, res, next) => {
   // validate username and password
   const schema = Joi.object().keys({
     refresh_token: Joi.string().required(),
+    appId: Joi.string().required(),
   });
 
   const { error, value } = schema.validate(req.body);
@@ -50,12 +51,13 @@ router.post('/refresh-token', async (req, res, next) => {
     return next(Boom.badRequest(error.details[0].message));
   }
 
-  const { refresh_token } = value;
+  const { refresh_token, appId } = value;
 
   let query = `
   query get_refresh_token(
     $refresh_token: uuid!,
     $current_timestampz: timestamptz!,
+    $appId: uuid
   ) {
     refresh_tokens: ${schema_name}refresh_tokens (
       where: {
@@ -71,7 +73,7 @@ router.post('/refresh-token', async (req, res, next) => {
       user {
         id
         active
-        user_roles {
+        user_roles(where: {app_id: {_eq: $appId}}) {
           default
           role
         }
@@ -86,6 +88,7 @@ router.post('/refresh-token', async (req, res, next) => {
     hasura_data = await graphql_client.request(query, {
       refresh_token,
       current_timestampz: new Date(),
+      appId
     });
   } catch (e) {
     console.error(e);
